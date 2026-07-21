@@ -216,9 +216,9 @@
 						<ComboBoxItem Content="A"/>
 					</ComboBox>
 
-					<CheckBox Content="Density" IsChecked="True"/>
-					<CheckBox Content="LAB" IsChecked="True"/>
-					<CheckBox Content="Spectrum" IsChecked="True"/>
+					<CheckBox Content="Density" IsChecked="{Binding IsDensity}"/>
+					<CheckBox Content="LAB" IsChecked="{Binding IsLab}"/>
+					<CheckBox Content="Spectrum" IsChecked="{Binding IsSpectrum}"/>
 
 					<TextBlock Text="M0/M1/M2:" Margin="0,4,0,0"/>
 
@@ -243,8 +243,8 @@
 					<Border Background="#EFEFEF" Padding="10" Margin="0,6,0,0">
 						<StackPanel Spacing="6">
 							<CheckBox Content="Mostrar Status (AEIT)" IsChecked="True"/>
-							<CheckBox Content="Mostrar M0/M1/M2" IsChecked="True"/>
-							<CheckBox Content="Enter adicional" IsChecked="False"/>
+							<CheckBox Content="Mostrar M0/M1/M2" IsChecked="{Binding ShowIlluminant}"/>
+							<CheckBox Content="Enter adicional" IsChecked="{Binding IsExtra}"/>
 						</StackPanel>
 					</Border>
 

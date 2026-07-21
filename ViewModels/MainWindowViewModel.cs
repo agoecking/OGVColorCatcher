@@ -25,16 +25,60 @@ namespace OGVColorCatcher.ViewModels
     public partial class MainWindowViewModel : ViewModelBase
     {
         //Variáveis
+
+        //Configurações de leitura
+        private bool _isDensity;
+        private bool _isLab;
+        private bool _isSpectrum;
+        public bool IsDensity
+        {
+            get => _isDensity;
+            set => this.RaiseAndSetIfChanged(ref _isDensity, value);
+        }
+        public bool IsLab
+        {
+            get => _isLab;
+            set => this.RaiseAndSetIfChanged(ref _isLab, value);
+        }
+        public bool IsSpectrum
+        {
+            get => _isSpectrum;
+            set => this.RaiseAndSetIfChanged(ref _isSpectrum, value);
+        }
+
+        //Configurações de escrita
+        private char decimalSeparatoraux = '.';
+        private bool _showIlluminant = true;
+        private bool _showSpectrumIlluminant = false;
+        public bool ShowIlluminant
+        {
+            get => _showIlluminant;
+            set
+            {
+                if (this.RaiseAndSetIfChanged(ref _showIlluminant, value))
+                {
+                    this.RaiseAndSetIfChanged(ref _showSpectrumIlluminant, !value);
+                }
+            }
+        }
+        //public bool ShowSpectrumIlluminant
+        //{
+        //    get => _showSpectrumIlluminant;
+        //    set
+        //    {
+        //        if (this.RaiseAndSetIfChanged(ref _showSpectrumIlluminant, value))
+        //        {
+        //            this.RaiseAndSetIfChanged(ref _showLabIlluminant, !value);
+        //        }
+        //    }
+        //}
         private int passwordSum;
         private I1SharpModel model;
         bool shouldTriggerMeasurements = false;
-        bool isDensity;
-        bool isLab;
-        bool isSpectrum;
-        bool isExtra;
+        private bool _isExtra;
         private bool saveToFile = false;
         private string measurementFolderPath = string.Empty;  // Pasta selecionada pelo usuário
-        private char decimalSeparatoraux = '.';
+
         public bool isHeaderOnFile = false;
         private bool isShowMeasurement = true;
         bool isMedia = false;
@@ -44,8 +88,7 @@ namespace OGVColorCatcher.ViewModels
         private bool isForceTab = false;
         private int[] printOptions = new int[3];
         private bool showStatusaux = true;
-        private bool showIlluminantLABaux = true;
-        private bool showIlluminantSpectrumaux = false;
+
 
         public I1Pro64 _currentDevice;
 
@@ -58,6 +101,15 @@ namespace OGVColorCatcher.ViewModels
                 model.CurrentDevice = value; // sincroniza com o seu model
             }
         }
+
+        public bool IsExtra
+        {
+            get => _isExtra;
+            set => this.RaiseAndSetIfChanged(ref _isExtra, value);
+        }
+
+
+
         public ObservableCollection<I1Pro64> Devices => model.Devices;
 
         public ReactiveCommand<Unit, Unit> CalibrateCommand { get; }
@@ -149,13 +201,13 @@ namespace OGVColorCatcher.ViewModels
         {
             try
             {
-                bool isDensityCheck = this.isDensity;
+                bool isDensityCheck = this.IsDensity;
                 int cont = 0;
 
                 var listOfMeasurements = model.CurrentDevice.TriggerMeasurementNew(
-                    this.isDensity,
-                    this.isLab,
-                    this.isSpectrum,
+                    this.IsDensity,
+                    this.IsLab,
+                    this.IsSpectrum,
                     statusDensityaux
                 );
 
@@ -347,17 +399,17 @@ namespace OGVColorCatcher.ViewModels
                 int spectrumIndex = -1;
                 int currentIndex = 0;
 
-                if (isDensity && currentIndex < listOfMeasurements.Count)
+                if (IsDensity && currentIndex < listOfMeasurements.Count)
                 {
                     densityIndex = currentIndex++;
                 }
 
-                if (isLab && currentIndex < listOfMeasurements.Count)
+                if (IsLab && currentIndex < listOfMeasurements.Count)
                 {
                     labIndex = currentIndex++;
                 }
 
-                if (isSpectrum && currentIndex < listOfMeasurements.Count)
+                if (IsSpectrum && currentIndex < listOfMeasurements.Count)
                 {
                     spectrumIndex = currentIndex++;
                 }
@@ -387,7 +439,7 @@ namespace OGVColorCatcher.ViewModels
                     }
 
                     // ✅ Densidade (usando índice dinâmico)
-                    if (isDensity && densityIndex >= 0 && densityIndex < listOfMeasurements.Count)
+                    if (IsDensity && densityIndex >= 0 && densityIndex < listOfMeasurements.Count)
                     {
                         if (isHeaderOnFile)
                         {
@@ -408,7 +460,7 @@ namespace OGVColorCatcher.ViewModels
                     }
 
                     // ✅ LAB (usando índice dinâmico)
-                    if (isLab && labIndex >= 0 && labIndex < listOfMeasurements.Count)
+                    if (IsLab && labIndex >= 0 && labIndex < listOfMeasurements.Count)
                     {
                         if (isHeaderOnFile)
                         {
@@ -435,7 +487,7 @@ namespace OGVColorCatcher.ViewModels
                     }
 
                     // ✅ Spectrum (usando índice dinâmico)
-                    if (isSpectrum && spectrumIndex >= 0 && spectrumIndex < listOfMeasurements.Count)
+                    if (IsSpectrum && spectrumIndex >= 0 && spectrumIndex < listOfMeasurements.Count)
                     {
                         if (isHeaderOnFile)
                         {
@@ -621,7 +673,7 @@ namespace OGVColorCatcher.ViewModels
                 return;
             }
 
-            bool isDensityCheck = this.isDensity;
+            bool isDensityCheck = this.IsDensity;
 
             // ✅ Densidade primeiro, igual ao fluxo do device_ButtonPressed
             if (isDensityCheck)
@@ -633,7 +685,7 @@ namespace OGVColorCatcher.ViewModels
                 {
                     PressReturn(simulator);
 
-                    if (this.isExtra)
+                    if (this.IsExtra)
                         PressReturnWithDelay(simulator, 1000);
                 }
             }
@@ -682,7 +734,7 @@ namespace OGVColorCatcher.ViewModels
                     {
                         PressReturn(simulator);
 
-                        if (this.isExtra)
+                        if (this.IsExtra)
                             PressReturnWithDelay(simulator, 1000);
                     }
                     else if (shouldTriggerMeasurementsaux && !isForceTab)
@@ -692,7 +744,7 @@ namespace OGVColorCatcher.ViewModels
                     }
 
                     // ✅ TAB EXTRA somente após a última leitura do for (se quiser reativar)
-                    if (isLastReading && !isExtra)
+                    if (isLastReading && !IsExtra)
                     {
                         // simulator.Keyboard.KeyPress(VirtualKeyCode.TAB);
                     }
@@ -707,7 +759,7 @@ namespace OGVColorCatcher.ViewModels
                 System.Threading.Thread.Sleep(1000);
                 PressReturn(simulator);
 
-                if (isExtra)
+                if (IsExtra)
                     PressReturn(simulator);
             }
         }
@@ -748,14 +800,14 @@ namespace OGVColorCatcher.ViewModels
         }
         private void WriteIlluminantLabelIfNeeded(InputSimulator simulator, int j)
         {
-            if (this.isLab && this.showIlluminantLABaux)
+            if (this.IsLab && this.ShowIlluminant)
             {
                 simulator.Keyboard.TextEntry("M" + printOptions[j]);
                 simulator.Keyboard.KeyPress(VirtualKeyCode.TAB);
                 return;
             }
 
-            if (this.isSpectrum && this.showIlluminantSpectrumaux)
+            if (this.IsSpectrum && this.ShowIlluminant)
             {
                 simulator.Keyboard.TextEntry("M" + printOptions[j]);
                 simulator.Keyboard.KeyPress(VirtualKeyCode.TAB);
