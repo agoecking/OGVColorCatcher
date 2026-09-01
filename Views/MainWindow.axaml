@@ -9,8 +9,8 @@
 		Icon="/Assets/avalonia-logo.ico"
 		Title="OGVColorCatcher"
 		xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
-		Width="620" Height="660"
-		MinWidth="620" MinHeight="660"
+		Width="668" Height="660"
+		MinWidth="668" MinHeight="660"
 		Background="#ECECEC">
 	<Window.Styles>
 		<Style Selector="GroupBox">
@@ -36,7 +36,7 @@
 		<Border Grid.Row="0" Background="#C2C2C2" Grid.ColumnSpan="3" Grid.Column="0" Padding="15">
 			<Grid ColumnDefinitions="Auto,Auto,*" RowDefinitions="Auto">
 
-				<Label Content="Device:" Grid.Column="0" Foreground="Black" Grid.Row="0" VerticalAlignment="Center" Margin="5"/>
+				<Label Content="Dispositivo:" Grid.Column="0" Foreground="Black" Grid.Row="0" VerticalAlignment="Center" Margin="5"/>
 
 				<ComboBox Grid.Column="1"
 						  Width="120"
@@ -65,7 +65,7 @@
 					</Grid.ColumnDefinitions>
 
 					<!-- Botão Desconectar -->
-					<Button Grid.Column="0"
+<!--					<Button Grid.Column="0"
 							Margin="10,5,0,5"
 							Command="{Binding CloseDeviceCommand}"
 							ToolTip.Tip="Desconectar"
@@ -88,14 +88,16 @@
 									  StrokeThickness="1" Data="M4,4 L20,20"/>
 							</Canvas>
 						</Viewbox>
-					</Button>
+					</Button>-->
 
 					<!-- Botão Calibrar -->
 					<Button Grid.Column="1"
 							Content="Calibrar"
 							Background="DarkGray"
 							Margin="10,0,0,0"
-							Command="{Binding CalibrateCommand}"/>
+							Command="{Binding CalibrateCommand}"
+							IsEnabled="{Binding IsCalibrateEnabled}"
+							/>
 
 					<!--					--><!-- Botão Substrate --><!--
 					<Button Grid.Column="2"
@@ -212,8 +214,9 @@
 
 			<GroupBox Grid.Row="0" Grid.Column="0" Header="Configurações de leitura" >
 				<StackPanel Margin="12" Spacing="8">
-					<ComboBox SelectedIndex="0">
-						<ComboBoxItem Content="A"/>
+					<ComboBox
+						ItemsSource="{Binding StatusOption}"
+						SelectedItem="{Binding StatusDensityaux, Mode=TwoWay}">
 					</ComboBox>
 
 					<CheckBox Content="Density" IsChecked="{Binding IsDensity}"/>
@@ -222,37 +225,42 @@
 
 					<TextBlock Text="M0/M1/M2:" Margin="0,4,0,0"/>
 
-					<ComboBox SelectedIndex="0">
-						<ComboBoxItem Content="M0"/>
+					<ComboBox
+						ItemsSource="{Binding IlluminantModeOption}"
+						SelectedItem="{Binding FirstMode, Mode=TwoWay}">
 					</ComboBox>
-					<ComboBox SelectedIndex="0">
-						<ComboBoxItem Content="M1"/>
+					<ComboBox
+						ItemsSource="{Binding IlluminantModeOption}"
+						SelectedItem="{Binding SecondMode, Mode=TwoWay}">
 					</ComboBox>
-					<ComboBox SelectedIndex="0">
-						<ComboBoxItem Content="M2"/>
+					<ComboBox
+						ItemsSource="{Binding IlluminantModeOption}"
+						SelectedItem="{Binding ThirdMode, Mode=TwoWay}">
 					</ComboBox>
+
 				</StackPanel>
 			</GroupBox>
 
 			<GroupBox Grid.Row="0" Grid.Column="1" Header="Configurações de escrita">
 				<StackPanel Margin="12" Spacing="8">
-					<ComboBox SelectedIndex="0">
-						<ComboBoxItem Content="Ponto"/>
+					<ComboBox
+						ItemsSource="{Binding DecimalSeparatorOption}"
+						SelectedItem="{Binding DecimalSeparatoraux, Mode=TwoWay}">
 					</ComboBox>
 
 					<Border Background="#EFEFEF" Padding="10" Margin="0,6,0,0">
 						<StackPanel Spacing="6">
-							<CheckBox Content="Mostrar Status (AEIT)" IsChecked="True"/>
-							<CheckBox Content="Mostrar M0/M1/M2" IsChecked="{Binding ShowIlluminant}"/>
+							<CheckBox Content="Mostrar Status (AEIT)" IsChecked="{Binding ShowStatusaux}"/>
+							<CheckBox Content="Mostrar M0/M1/M2" IsChecked="{Binding ShowIlluminantMode}"/>
 							<CheckBox Content="Enter adicional" IsChecked="{Binding IsExtra}"/>
 						</StackPanel>
 					</Border>
 
 					<Border Background="#EFEFEF" Padding="10">
 						<StackPanel Spacing="6">
-							<CheckBox Content="Lembrar" IsChecked="False"/>
-							<CheckBox Content="Dados na mesma linha" IsChecked="False"/>
-							<CheckBox Content="Leituras na mesma linha" IsChecked="False"/>
+							<CheckBox Content="Lembrar" IsChecked="{Binding RememberSettings}"/>
+							<CheckBox Content="Dados de modo de iluminante na mesma linha" IsChecked="{Binding SameLineIlluminantModeData}"/>
+							<CheckBox Content="Todas as leituras na mesma linha" IsChecked="{Binding SameLineAllData}"/>
 						</StackPanel>
 					</Border>
 				</StackPanel>
@@ -275,11 +283,14 @@
 			<GroupBox Grid.Row="1" Grid.Column="1" Header="Salvar em arquivo">
 				<StackPanel Margin="12" Spacing="10">
 					<StackPanel Orientation="Horizontal" Spacing="8">
-						<CheckBox Content="Salvar em arquivo TXT" IsChecked="False"/>
-						<Button Content="Escolher Pasta" IsEnabled="False"/>
-					</StackPanel>
+						<CheckBox Content="Salvar em arquivo TXT" IsChecked="{Binding SaveToFile}"/>
+						<Button Content="Escolher Pasta"
+								IsEnabled="{Binding SaveToFile}"
+								Command="{Binding SelectFolderCommand}"
+								CommandParameter="{Binding $parent[Window]}"/>
+				</StackPanel>
 
-					<CheckBox Content="Cabeçalho" IsChecked="False"/>
+					<CheckBox Content="Cabeçalho" IsChecked="{Binding IsHeaderOnFile}"/>
 					<TextBlock Text="Modo: Teclado (padrão)" Foreground="Gray"/>
 				</StackPanel>
 			</GroupBox>

@@ -4,14 +4,14 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:OGVColorCatcher.ViewModels"
 		mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="450"
-		Width="600" Height="450"
+		Width="400" Height="250"
 		x:Class="OGVColorCatcher.Settings"
 		Title="Settings"
 		CanResize="False"
 		WindowStartupLocation="CenterOwner"
 		Background="#C2C2C2">
 
-<!--	<StackPanel Margin="20" x:DataType="local:MainWindowViewModel">
+	<StackPanel Margin="20" x:DataType="local:MainWindowViewModel">
 
 
 		<Grid>
@@ -20,77 +20,16 @@
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
 			</Grid.ColumnDefinitions>
 
-			<Label Grid.Row="0" Grid.Column="0" Content="Config" VerticalAlignment="Center" Margin="10"/>
+			<Label Grid.Row="0" Grid.Column="0" Content="Serial do aparelho:" VerticalAlignment="Center" Margin="3"/>
+			<TextBox x:Name="SerialTextBox" Grid.Row="0" Grid.Column="1" FontSize="15" Margin="3" MinWidth="200"/>
+			<Button Grid.Row="1" Grid.Column="1" Content="Save" Command="{Binding SaveDeviceSerialCommand}" CommandParameter="{Binding Text, ElementName=SerialTextBox}" Margin="3,12,0,0"/>
 
-
-			<Grid Grid.Row="1" Grid.Column="0">
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-				</Grid.RowDefinitions>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="Auto"/>
-				</Grid.ColumnDefinitions>
-
-				<Label Grid.Row="0" Grid.Column="0" Content="Substrate:" VerticalAlignment="Center" Margin="5"/>
-				<ComboBox Grid.Row="0" Grid.Column="1"
-						  Margin="5"
-						  SelectedItem="{Binding PaperSelected}"
-						  ItemsSource="{Binding PaperSetup}">
-					<ComboBox.ItemTemplate>
-						<DataTemplate>
-							<TextBlock Text="{Binding}"/>
-						</DataTemplate>
-					</ComboBox.ItemTemplate>
-				</ComboBox>
-
-
-				<Label Grid.Row="1" Grid.Column="0" Content="Filter:" VerticalAlignment="Center" Margin="5"/>
-				<ComboBox Grid.Row="1"
-						  Grid.Column="1"
-						  Margin="5"
-						  SelectedIndex="1"
-						  ItemsSource="{Binding StatusSetup}"
-						  SelectedItem="{Binding StatusSelected}">
-
-					<ComboBox.ItemTemplate>
-						<DataTemplate>
-							<TextBlock Text="{Binding}"/>
-						</DataTemplate>
-					</ComboBox.ItemTemplate>
-				</ComboBox>
-
-
-				<Label Grid.Column="0" Grid.Row="2" Margin="5" >Decimais:</Label>
-				<NumericUpDown
-				Grid.Column="1"
-				Grid.Row="2"
-				Margin="5"
-				Value="{Binding Decimais}"
-				Maximum="10"
-				Minimum="1"
-				/>
-
-				<Label Grid.Column="0" Grid.Row="3" Margin="5" >Decimais de porcentagem:</Label>
-				<NumericUpDown
-				Grid.Column="1"
-				Grid.Row="3"
-				Margin="5"
-				Value="{Binding DecimaisPorcentagem}"
-				Maximum="10"
-				Minimum="1"
-				/>
-			</Grid>
 		</Grid>
-	</StackPanel>-->
+	</StackPanel>
 </Window>
 
 <!--status
