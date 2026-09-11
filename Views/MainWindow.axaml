@@ -6,7 +6,7 @@
 		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 		x:Class="OGVColorCatcher.Views.MainWindow"
 		x:DataType="vm:MainWindowViewModel"
-		Icon="/Assets/avalonia-logo.ico"
+		Icon="/Assets/O.ico"
 		Title="OGVColorCatcher"
 		xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
 		Width="668" Height="660"
@@ -65,29 +65,29 @@
 					</Grid.ColumnDefinitions>
 
 					<!-- Botão Desconectar -->
-<!--					<Button Grid.Column="0"
-							Margin="10,5,0,5"
-							Command="{Binding CloseDeviceCommand}"
-							ToolTip.Tip="Desconectar"
-							Background="Transparent"
-							IsEnabled="False"
-							BorderThickness="0"
-							Foreground="Black">
-						<Viewbox Width="20" Height="20">
-							<Canvas Width="24" Height="24">
-								<Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-									  StrokeThickness="1" Fill="Transparent"
-									  Data="M6,14 L12,8 L14,10 L8,16 Z"/>
-								<Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-									  StrokeThickness="1" Data="M12,6 L12,3"/>
-								<Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-									  StrokeThickness="1" Data="M15,7 L15,4"/>
-								<Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-									  StrokeThickness="1" Data="M5,17 C8,20 14,20 17,17"/>
-								<Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-									  StrokeThickness="1" Data="M4,4 L20,20"/>
-							</Canvas>
-						</Viewbox>
+					<!--					<Button Grid.Column="0"
+					Margin="10,5,0,5"
+					Command="{Binding CloseDeviceCommand}"
+					ToolTip.Tip="Desconectar"
+					Background="Transparent"
+					IsEnabled="False"
+					BorderThickness="0"
+					Foreground="Black">
+					<Viewbox Width="20" Height="20">
+					<Canvas Width="24" Height="24">
+					<Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+					StrokeThickness="1" Fill="Transparent"
+					Data="M6,14 L12,8 L14,10 L8,16 Z"/>
+					<Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+					StrokeThickness="1" Data="M12,6 L12,3"/>
+					<Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+					StrokeThickness="1" Data="M15,7 L15,4"/>
+					<Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+					StrokeThickness="1" Data="M5,17 C8,20 14,20 17,17"/>
+					<Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+					StrokeThickness="1" Data="M4,4 L20,20"/>
+					</Canvas>
+					</Viewbox>
 					</Button>-->
 
 					<!-- Botão Calibrar -->
@@ -288,7 +288,7 @@
 								IsEnabled="{Binding SaveToFile}"
 								Command="{Binding SelectFolderCommand}"
 								CommandParameter="{Binding $parent[Window]}"/>
-				</StackPanel>
+					</StackPanel>
 
 					<CheckBox Content="Cabeçalho" IsChecked="{Binding IsHeaderOnFile}"/>
 					<TextBlock Text="Modo: Teclado (padrão)" Foreground="Gray"/>

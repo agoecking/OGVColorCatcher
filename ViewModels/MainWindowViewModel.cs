@@ -8,7 +8,10 @@ using Avalonia.ReactiveUI;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using MsBox.Avalonia;
+using Newtonsoft.Json;
 using OGVColorCatcher.Models;
+using OGVColorCatcher.Services;
+using OGVColorCatcher.Views;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -206,10 +209,12 @@ namespace OGVColorCatcher.ViewModels
         //Configurações gerais
         private int passwordSum;
         bool shouldTriggerMeasurements = false;
+        public ActivationWindow? ActivationWindow { get; set; }
         public ICommand SubmitPasswordCommand { get; }
+        public ICommand SubmitActivationCommand { get; }
         public ICommand SaveDeviceSerialCommand { get; }
         private bool _isCalibrateEnabled = false;
-
+        public string _showError;
         private bool _rememberSettings = false;
 
         public bool RememberSettings
@@ -233,13 +238,18 @@ namespace OGVColorCatcher.ViewModels
             get => _isCalibrateEnabled;
             set => this.RaiseAndSetIfChanged(ref _isCalibrateEnabled, value);
         }
+        public string ShowError
+        {
+            get => _showError;
+            set => this.RaiseAndSetIfChanged(ref _showError, value);
+        }
         //------------------------------------
         //Construtor
         public MainWindowViewModel(I1SharpModel model)
         {
             this.model = model;
             this.model.DeviceChanged += model_DeviceChanged;
-
+            ShowError = string.Empty;
             var scheduler = AvaloniaScheduler.Instance;
 
             CalibrateCommand = ReactiveCommand.Create(CalibrateDevice, outputScheduler: scheduler);
@@ -248,6 +258,7 @@ namespace OGVColorCatcher.ViewModels
                 SelectFolder,
                 outputScheduler: scheduler);
             SubmitPasswordCommand = new RelayCommand<object?>(SubmitPassword);
+            SubmitActivationCommand = new RelayCommand<object?>(SubmitActivation);
             SaveDeviceSerialCommand = new RelayCommand<object?>(SaveDeviceSerial);
 
             DateTime currentDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time"));
@@ -1026,6 +1037,142 @@ namespace OGVColorCatcher.ViewModels
                         }
                     }
                 }
+            }
+        }
+        private const string BaseUrl = "https://licensing.ogvcolor.cloud/";
+
+        private void SubmitActivation(object? parameter)
+        {
+            try
+            {
+                string licenseKey = parameter?.ToString()?.Trim() ?? "";
+
+                if (string.IsNullOrWhiteSpace(licenseKey))
+                {
+                    return;
+                }
+
+                //System.Windows.Application.Current.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
+
+                string fingerprint = FingerPrintService.ComputeFingerprint();
+                string responseJson;
+                try
+                {
+                    responseJson = LicensingApi.Activate(BaseUrl, licenseKey, fingerprint);
+                }
+                catch (Exception ex)
+                {
+                    SetShowError(ex.Message);
+                    return;
+                }
+
+                LicenseEnvelope envelope;
+                LicensePayload payload;
+                try
+                {
+                    envelope = JsonConvert.DeserializeObject<LicenseEnvelope>(responseJson);
+                    if (envelope == null || string.IsNullOrWhiteSpace(envelope.payload) || string.IsNullOrWhiteSpace(envelope.signature))
+                    {
+                        ShowError = "Resposta incompleta do servidor";
+                        throw new Exception("Resposta incompleta do servidor");
+                    }
+
+                    payload = JsonConvert.DeserializeObject<LicensePayload>(envelope.payload);
+                    if (payload == null)
+                    {
+                        ShowError = "Payload inválido";
+                        throw new Exception("Payload inválido");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SetShowError(ex.Message);
+                    return;
+                }
+
+                string localReason;
+                bool validLocal = LicenseValidator.IsValidLicense(responseJson, out localReason);
+                if (!validLocal)
+                {
+                    //ShowError = localReason;
+                    return;
+                }
+
+                string onlineReason;
+                DateTime? serverUtc;
+                bool validOnline = LicensingApi.ValidateOnlineWithServer(
+                    BaseUrl,
+                    payload.licenseKeyId,
+                    fingerprint,
+                    out onlineReason,
+                    out serverUtc
+                );
+
+                if (!validOnline)
+                {
+                    return;
+                }
+
+                if (serverUtc.HasValue)
+                {
+                    LicenseClockGuard.UpdateFromServerUtc(serverUtc.Value);
+                }
+
+                try
+                {
+                    LicenseStore.Save(responseJson);
+                }
+                catch (UnauthorizedAccessException uaEx)
+                {
+                    SetShowError(uaEx.Message);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    SetShowError(ex.Message);
+                    return;
+                }
+
+                //System.Windows.Application.Current.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
+                System.Threading.Thread.Sleep(1500);
+
+                var main = new MainWindow(new I1SharpModel());
+                main.Show();
+
+                ActivationWindow?.Close();
+            }
+            catch (Exception ex)
+            {
+                SetShowError(ex.Message);
+            }
+        }
+
+        private void SetShowError(string message)
+        {
+            try
+            {
+                int jsonStart = message.IndexOf('{');
+
+                if (jsonStart >= 0)
+                {
+                    string json = message.Substring(jsonStart);
+
+                    var error = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+
+                    if (error != null &&
+                        error.TryGetValue("detail", out string? detail) &&
+                        !string.IsNullOrWhiteSpace(detail))
+                    {
+                        ShowError = detail;
+                        return;
+                    }
+                }
+
+                ShowError = message;
+            }
+            catch
+            {
+                ShowError = message;
             }
         }
     }
