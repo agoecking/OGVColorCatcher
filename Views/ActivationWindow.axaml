@@ -9,6 +9,7 @@
         Width="400"
         Height="250"
         x:Class="OGVColorCatcher.ActivationWindow"
+        Icon="/Assets/Occ.ico"
         Title="Settings"
         CanResize="False"
         WindowStartupLocation="CenterOwner"

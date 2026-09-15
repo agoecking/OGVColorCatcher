@@ -6,7 +6,7 @@
 		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 		x:Class="OGVColorCatcher.Views.MainWindow"
 		x:DataType="vm:MainWindowViewModel"
-		Icon="/Assets/O.ico"
+		Icon="/Assets/Occ.ico"
 		Title="OGVColorCatcher"
 		xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
 		Width="668" Height="660"
